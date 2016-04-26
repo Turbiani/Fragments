@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Fragments</string>
+    <string name="acao_pesquisar">Pesquisar</string>
+    <string name="acao_novo">Novo</string>
+    <string name="acao_info">Info</string>
+    <string name="acao_busca">Procurar por Hotel</string>
+    <string name="hint_busca">Buscar</string>
 </resources>
