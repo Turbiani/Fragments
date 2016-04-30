@@ -1,10 +1,12 @@
 package android.dominando.fragments;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.MenuItem;
 
 public class HotelDetalheActivity extends AppCompatActivity {
     public static final String EXTRA_HOTEL = "hotel";
@@ -13,6 +15,7 @@ public class HotelDetalheActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotel_detalhe);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState == null){
             Intent intent = getIntent();
@@ -25,5 +28,31 @@ public class HotelDetalheActivity extends AppCompatActivity {
             ft.replace(R.id.detalhe, fragment, HotelDetalheFragment.TAG_DETALHE);
             ft.commit();
         }
+    }
+
+    //PARA VERSOES SUPERIORES A 4.1
+    /*@Nullable
+    @Override
+    public Intent getSupportParentActivityIntent() {
+        Intent it = super.getParentActivityIntent();
+        if(it != null){
+            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        return  it;
+    }*/
+
+    //PARA SER COMPATIVEL COM VERSOES ANTIGAS
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                Intent intent = NavUtils.getParentActivityIntent(this);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                NavUtils.navigateUpTo(this, intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
