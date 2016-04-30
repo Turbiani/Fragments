@@ -1,18 +1,24 @@
 package android.dominando.fragments;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class HotelActivity extends AppCompatActivity implements AoClicarNoHotel,
         SearchView.OnQueryTextListener,
-        MenuItemCompat.OnActionExpandListener{
+        MenuItemCompat.OnActionExpandListener,
+        AoSalvarHotel{
 
     private FragmentManager mFragmentManager;
     private HotelListFragment mListFragment;
@@ -40,6 +46,17 @@ public class HotelActivity extends AppCompatActivity implements AoClicarNoHotel,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_info:
+                SobreDialogFragment sobreDialogFragmentFragment = new SobreDialogFragment();
+                sobreDialogFragmentFragment.show(getSupportFragmentManager(), "Sobre");
+                break;
+
+            case R.id.action_new:
+                HotelDialogFragment hotelDialogFragment = HotelDialogFragment.newInstace(null);
+                hotelDialogFragment.abrir(getSupportFragmentManager());
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -89,5 +106,37 @@ public class HotelActivity extends AppCompatActivity implements AoClicarNoHotel,
     private boolean isSmartPhone(){
         return getResources().getBoolean(R.bool.smartphone);
     }
+
+    @Override
+    public void salvouHotel(Hotel hotel) {
+        mListFragment.adicionar(hotel);
+    }
+
+
+    //EXEMPLO COM ALERT DIALOG, NÃO É MAIS RECOMENDADO E SIM O DIALOG FRAGMENT
+    public static class SobreDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (i == DialogInterface.BUTTON_NEGATIVE){
+                        Intent it = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://www.nglauber.com.br"));
+                        startActivity(it);
+                    }
+                }
+            };
+            AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.sobre_titulo)
+                    .setMessage(R.string.sobre_mensagem)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setNegativeButton(R.string.sobre_botao_site, listener)
+                    .create();
+            return dialog;
+        }
+    }
+
+
 
 }
