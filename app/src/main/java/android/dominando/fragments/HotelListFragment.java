@@ -3,6 +3,7 @@ package android.dominando.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -15,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -87,13 +90,7 @@ public class HotelListFragment extends ListFragment
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
         if(menuItem.getItemId()==R.id.acao_delete){
-            SparseBooleanArray checked = mListView.getCheckedItemPositions();
-
-            for (int i = checked.size()-1; i >= 0; i--){
-                if(checked.valueAt(i)){
-                    mHoteis.remove(checked.keyAt(i));
-                }
-            }
+            remover();
             mode.finish();
             return true;
         }
@@ -120,6 +117,30 @@ public class HotelListFragment extends ListFragment
         return consumed;
     }
 
+    private void remover(){
+        final List<Hotel> hoteisExcluidos = new ArrayList<>();
+        SparseBooleanArray checked = mListView.getCheckedItemPositions();
+
+        for (int i = checked.size()-1; i >= 0; i--){
+            if(checked.valueAt(i)){
+                hoteisExcluidos.add(mHoteis.remove(checked.keyAt(i)));
+            }
+        }
+
+        Snackbar.make(mListView,
+                getString(R.string.mensagem_excluir, hoteisExcluidos.size()),
+                Snackbar.LENGTH_LONG)
+                .setAction(R.string.desfazer, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        for (Hotel hotel: hoteisExcluidos) {
+                            mHoteis.add(hotel);
+                        }
+                        limparBusca();
+                    }
+                }).show();
+    }
+
     public void buscar(String s) {
         if (s == null || s.trim().equals("")) {
             limparBusca();
@@ -142,6 +163,7 @@ public class HotelListFragment extends ListFragment
 
     public void limparBusca() {
         mListView.setOnItemLongClickListener(this);
+        ordenar();
         mAdapter = new ArrayAdapter<Hotel>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
@@ -151,6 +173,7 @@ public class HotelListFragment extends ListFragment
 
     public void adicionar(Hotel hotel) {
         mHoteis.add(hotel);
+        ordenar();
         mAdapter.notifyDataSetChanged();
     }
 
@@ -183,6 +206,15 @@ public class HotelListFragment extends ListFragment
                 R.plurals.numero_selecionados,
                 checkedCount, checkedCount);
         mActionMode.setTitle(selecionados);
+    }
+
+    private void ordenar() {
+        Collections.sort(mHoteis, new Comparator<Hotel>() {
+            @Override
+            public int compare(Hotel h1, Hotel h2) {
+                return h1.nome.compareTo(h2.nome);
+            }
+        });
     }
 
     private List<Hotel> carregaHoteis(){
