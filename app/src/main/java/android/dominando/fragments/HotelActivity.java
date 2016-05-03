@@ -5,15 +5,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class HotelActivity extends AppCompatActivity implements AoClicarNoHotel,
         SearchView.OnQueryTextListener,
@@ -51,11 +52,6 @@ public class HotelActivity extends AppCompatActivity implements AoClicarNoHotel,
                 SobreDialogFragment sobreDialogFragmentFragment = new SobreDialogFragment();
                 sobreDialogFragmentFragment.show(getSupportFragmentManager(), "Sobre");
                 break;
-
-            case R.id.action_new:
-                HotelDialogFragment hotelDialogFragment = HotelDialogFragment.newInstace(null);
-                hotelDialogFragment.abrir(getSupportFragmentManager());
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -78,6 +74,11 @@ public class HotelActivity extends AppCompatActivity implements AoClicarNoHotel,
             it.putExtra(HotelDetalheActivity.EXTRA_HOTEL, hotel);
             startActivity(it);
         }
+    }
+
+    public void adicionarHotelClick(View v){
+        HotelDialogFragment hotelDialogFragment = HotelDialogFragment.newInstace(null);
+        hotelDialogFragment.abrir(getSupportFragmentManager());
     }
 
     @Override

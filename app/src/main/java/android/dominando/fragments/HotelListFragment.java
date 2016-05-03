@@ -129,7 +129,7 @@ public class HotelListFragment extends ListFragment
 
         Snackbar.make(mListView,
                 getString(R.string.mensagem_excluir, hoteisExcluidos.size()),
-                Snackbar.LENGTH_LONG)
+                Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.desfazer, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
