@@ -1,9 +1,15 @@
 package android.dominando.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
@@ -15,6 +21,8 @@ import android.widget.TextView;
 public class HotelDetalheFragment extends Fragment {
     public static final String TAG_DETALHE = "tagDetalhe";
     public static final String EXTRA_HOTEL = "hotel";
+
+    ShareActionProvider mShareActionProvider;
 
     TextView  mTextNome;
     TextView  mTextEndereco;
@@ -57,5 +65,23 @@ public class HotelDetalheFragment extends Fragment {
             mRatingEstrelas.setRating(mHotel.estrelas);
         }
         return layout;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_hotel_detalhe, menu);
+
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
+        String texto = getString(R.string.texto_compartilhar, mHotel.nome, mHotel.estrelas);
+
+        Intent it = new Intent(Intent.ACTION_SEND);
+        it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        it.setType("text/plain");
+        it.putExtra(Intent.EXTRA_TEXT, texto);
+
+        mShareActionProvider.setShareIntent(it);
     }
 }
